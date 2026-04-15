@@ -1,312 +1,307 @@
+# ARCHITECTURE LOGICIELLE — FICHE DE RÉVISION
+
+---
+
 # DOMAINE CENTRAL
 
-## 1. Classes Entité (ou Model)
+## 1. Entité (Entity / Model)
 
-👉 But : représenter les données et l'état du domaine
+**Rôle :** représenter un objet du métier avec un état
 
-Exemple :
-Une classe User qui contient une propriété privée name et une méthode qui renvoie ce nom.
+**À retenir :**
+- Possède une **identité**
+- Contient des **données + un peu de logique**
+- Représente un **objet du monde réel**
 
-Ce qu'elles sont :
+**Exemple :**
+User, Product, Order
 
-- Des "objets" du monde réel
-- Principalement des données avec une logique simple
-- Souvent mappées aux lignes de base de données (dans les couches de persistance)
-
-🧐 Pense :
-"Qu'est-ce que c'est ?"
-
-NOTE : Certaines entités sont des Aggregate Roots (frontière publique de cohérence), la plupart ne le sont pas.
+**Question clé :**
+> Qu'est-ce que c'est ?
 
 ---
 
-## 2. Classes Aggregate Root (Entité spécialisée)
+## 2. Aggregate Root
 
-👉 But : agir comme point d'entrée principal et frontière de cohérence pour un groupe d'objets de domaine liés (un agrégat)
+**Rôle :** point d’entrée d’un groupe d’objets (agrégat)
 
-Exemple :
-Une classe Order qui gère OrderItems et OrderAddresses, en garantissant que tous les changements passent par elle (ex. "Une commande ne peut avoir qu'une seule adresse de livraison").
+**À retenir :**
+- C’est une **entité spéciale**
+- Contrôle **toutes les modifications**
+- Garantit la **cohérence métier**
+- Les autres objets ne sont accessibles **qu’à travers elle**
 
-Ce qu'elles sont :
+**Exemple :**
+Order qui gère ses OrderItems
 
-- Un type spécial d'entité
-- Le point d'entrée unique vers un agrégat
-- Responsables de faire respecter la cohérence et les règles métier
-- Peuvent contenir d'autres entités et value objects
-- Le code externe ne doit interagir avec l'agrégat qu'à travers la racine
-
-🧐 Pense :
-"À travers quel objet tous les changements de ce groupe doivent-ils être contrôlés ?"
+**Question clé :**
+> Par où doivent passer tous les changements ?
 
 ---
 
-## 3. Classes Value Object
+## 3. Value Object
 
-👉 But : représenter des valeurs immuables
+**Rôle :** représenter une valeur immuable
 
-Exemple :
-Un objet Money qui contient un montant et une devise et qui ne change pas après création.
+**À retenir :**
+- **Pas d’identité**
+- **Immuable**
+- Comparé par **valeur**, pas par ID
 
-Ce qu'elles sont :
+**Exemple :**
+Money, Email, Date
 
-- Sans identité
-- Représentent des concepts comme l'argent, la date ou l'email
-- Toujours immuables
-
-🧐 Pense :
-"Quelle valeur est-ce ?"
+**Question clé :**
+> Quelle valeur représente cet objet ?
 
 ---
 
-## 4. Classes Domain Service
+## 4. Domain Service
 
-👉 But : contenir la logique de domaine qui n'appartient pas à une seule entité
+**Rôle :** logique métier complexe
 
-Exemple :
-Un PricingService qui calcule des remises en se basant sur plusieurs entités comme User, Order et Product.
+**À retenir :**
+- Logique qui ne tient pas dans une seule entité
+- Travaille avec **plusieurs objets**
+- Généralement **stateless**
 
-Ce qu'elles sont :
+**Exemple :**
+Calcul de prix, règles de remise
 
-- Logique métier au niveau domaine
-- Utilisées quand la logique ne s'intègre pas naturellement dans une seule Entité ou un seul Value Object
-- Opèrent sur plusieurs objets de domaine
-- Sans état dans la plupart des cas
-
-🧐 Pense :
-"Où placer cette règle métier quand aucun objet unique ne la possède ?"
+**Question clé :**
+> Où mettre cette règle métier ?
 
 ---
 
 # COUCHE APPLICATION
 
-## 5. Classes Application Service
+## 5. Application Service
 
-👉 But : orchestrer les cas d'usage et coordonner la logique de domaine
+**Rôle :** orchestrer un cas d’usage
 
-Exemple :
-Un CheckoutService qui gère le processus de paiement en coordonnant plusieurs parties du système.
+**À retenir :**
+- Coordonne les objets du domaine
+- Ne contient **pas de logique métier complexe**
+- Gère le **flux d’un use case**
 
-Ce qu'elles sont :
+**Exemple :**
+Processus de paiement
 
-- Orchestration/coordination des cas d'usage
-- Coordonnent plusieurs objets de domaine
-- Sans état dans la plupart des cas (portée par requête, pas parce qu'elles sont des opérations de domaine pures)
-
-🧐 Pense :
-"Comment ce cas d'usage est-il exécuté ?"
-
----
-
-## 6. Classes DTO (Data Transfer Object)
-
-👉 But : transférer des données entre les couches
-
-Exemple :
-Un UserDTO qui transporte un nom et un email entre l'API, la couche service et la base de données.
-
-Ce qu'elles sont :
-
-- Conteneurs de données simples
-- Sans logique métier
-- Utilisées pour déplacer des données à travers les frontières du système
-
-🧐 Pense :
-"Comment transporter ces données ?"
+**Question clé :**
+> Comment s’exécute ce cas d’usage ?
 
 ---
 
-## 7. Classes Mapper
+## 6. DTO (Data Transfer Object)
 
-👉 But : convertir entre différentes représentations d'objets
+**Rôle :** transporter des données
 
-Exemple :
-Un UserMapper qui convertit une entité User en UserDTO et inversement.
+**À retenir :**
+- **Pas de logique**
+- Juste des **données**
+- Sert entre couches (API, service, DB)
 
-Ce qu'elles sont :
+**Exemple :**
+UserDTO
 
-- Traduction entre les couches (Entité ↔ DTO ↔ modèles API)
-- Centralisent la logique de transformation
-- Évitent les fuites de modèles de domaine vers les couches externes
-- Logique de transformation pure
-
-🧐 Pense :
-"Comment convertir cet objet vers une autre forme ?"
-
-NOTE : Le mapping existe toujours. Les frameworks peuvent l'automatiser.
+**Question clé :**
+> Comment faire passer ces données ?
 
 ---
 
-# COUCHE INTERFACE / PRÉSENTATION
+## 7. Mapper
 
-## 8. Classes Controller
+**Rôle :** transformer les objets
 
-👉 But : point d'entrée des interactions externes (souvent HTTP)
+**À retenir :**
+- Convertit :
+  - Entité → DTO
+  - DTO → Entité
+- Évite de mélanger les couches
 
-Exemple :
-Un UserController qui reçoit une requête pour afficher un utilisateur et délègue à un service la récupération des données.
+**Exemple :**
+User → UserDTO
 
-Ce qu'elles sont :
-
-- Reçoivent les requêtes externes
-- Appellent les services
-- Renvoient des réponses
-
-🧐 Pense :
-"Comment le monde extérieur interagit-il avec le système ?"
+**Question clé :**
+> Comment changer la forme de cet objet ?
 
 ---
 
-## 9. Classes Presenter (MVP) / ViewModel (MVVM)
+# COUCHE PRÉSENTATION
 
-👉 But : façonner les données pour la couche de présentation
+## 8. Controller
 
-Exemple :
-Un UserViewModel qui formate les données utilisateur spécifiquement pour les réponses API.
+**Rôle :** point d’entrée (HTTP)
 
-Ce qu'elles sont :
+**À retenir :**
+- Reçoit les requêtes
+- Appelle les services
+- Retourne une réponse
 
-- Formatent les données pour l'UI ou les réponses API
-- Cachent la structure interne du domaine
-- Adaptées à la consommation (pas au stockage ni à la logique de domaine)
-- Souvent utilisées en MVP, MVVM, ou Clean Architecture.
+**Exemple :**
+GET /users
 
-🧐 Pense :
-"À quoi ces données doivent-elles ressembler pour le monde extérieur ?"
-
----
-
-# COUCHE INFRASTRUCTURE (Systèmes externes et persistance)
-
-👉 Gère la communication avec les systèmes externes (APIs, services) et les couches de persistance (base de données, cache)
-
-## 10. Classes Repository
-
-👉 But : fournir une abstraction pour récupérer et persister des objets de domaine
-
-Exemple :
-Une abstraction au-dessus du stockage de données (peut être API, cache, SQL, etc.)
-
-Ce qu'elles sont :
-
-- Couche d'accès indépendante du type de stockage
-- Cachent la complexité SQL ou ORM
-- Renvoient des entités de domaine
-
-🧐 Pense :
-"Comment récupérer ou sauvegarder des données ?"
+**Question clé :**
+> Comment le système est-il appelé ?
 
 ---
 
-## 11. Classes Infrastructure Service
+## 9. Presenter / ViewModel
 
-👉 But : gérer les systèmes externes et les préoccupations techniques
+**Rôle :** préparer les données pour l’extérieur
 
-Exemple :
-Un EmailService qui envoie des emails via un fournisseur SMTP externe.
+**À retenir :**
+- Formate les données
+- Cache le domaine
+- Adapté à l’UI / API
 
-Ce qu'elles sont :
+**Exemple :**
+UserViewModel
 
-- Intégrations avec les systèmes externes (email, SMS, APIs, services cloud)
-- Détails d'implémentation techniques
-- Ne font pas partie de la logique métier centrale
-- Souvent cachées derrière des interfaces
-
-🧐 Pense :
-"Comment communiquer avec les systèmes externes ?"
+**Question clé :**
+> À quoi doivent ressembler les données ?
 
 ---
 
-## 12. Classes Adapter / Gateway
+# COUCHE INFRASTRUCTURE
 
-👉 But : servir de pont entre l'application et des systèmes externes ou des interfaces incompatibles
+## 10. Repository
 
-Exemple :
-Un PaymentGatewayAdapter qui convertit la requête de paiement interne de l'application vers le format attendu par l'API d'un fournisseur de paiement externe.
+**Rôle :** accès aux données
 
-Ce qu'elles sont :
+**À retenir :**
+- Abstraction du stockage
+- Retourne des **entités**
+- Cache SQL / ORM / API
 
-- Pont entre ton système et des services externes (APIs, bibliothèques tierces, systèmes legacy)
-- Traduisent ou adaptent des contrats externes en contrats internes (et parfois l'inverse)
-- Cachent les détails d'implémentation externes derrière une interface interne stable
-- Souvent utilisées dans la couche infrastructure ou d'intégration
+**Exemple :**
+UserRepository
 
-🧐 Pense :
-"Comment faire fonctionner un système externe avec mon application sans couplage ?"
-
----
-
-# RÔLES DE CLASSES AVANCÉS/OPTIONNELS
-
-👉 Ces rôles sont surtout courants en CQRS, architecture orientée événements, monolithes modulaires et microservices ; ils sont optionnels dans les applications CRUD/en couches simples.
-
-## 13. Classes Command
-
-👉 But : représenter une intention d'exécuter une action dans le système
-
-Exemple :
-Un CreateOrderCommand qui transporte customerId, items, et shippingAddress nécessaires pour créer une commande.
-
-Ce qu'elles sont :
-
-- Objets d'intention qui décrivent une action demandée
-- Contiennent généralement seulement des données d'entrée (pas de logique métier)
-- Souvent utilisées en CQRS ou en architecture orientée cas d'usage
-
-🧐 Pense :
-"Quelle action est demandée ?"
+**Question clé :**
+> Comment récupérer / sauvegarder ?
 
 ---
 
-## 14. Classes Command Handler
+## 11. Infrastructure Service
 
-👉 But : exécuter une commande en coordonnant le flux du cas d'usage requis
+**Rôle :** gérer les services externes
 
-Exemple :
-Un CreateOrderCommandHandler qui valide les entrées, charge les objets de domaine, appelle le comportement de domaine, et persiste le résultat.
+**À retenir :**
+- Email, SMS, APIs, cloud
+- Technique, pas métier
+- Caché derrière une interface
 
-Ce qu'elles sont :
+**Exemple :**
+EmailService
 
-- Exécuteurs de cas d'usage pour des commandes spécifiques
-- Coordonnent le flux applicatif et les dépendances
-- Généralement un handler par commande
-
-🧐 Pense :
-"Qui exécute cette action demandée ?"
-
----
-
-## 15. Classes Event
-
-👉 But : représenter quelque chose qui s'est déjà produit dans le domaine ou le système
-
-Exemple :
-Un OrderPaidEvent émis après qu'un paiement de commande est terminé avec succès.
-
-Ce qu'elles sont :
-
-- Des faits au passé (quelque chose s'est déjà produit)
-- Données immuables décrivant cette occurrence
-- Peuvent être des événements de domaine (internes) ou d'intégration (communication externe)
-
-🧐 Pense :
-"Qu'est-ce qui s'est passé ?"
+**Question clé :**
+> Comment parler aux systèmes externes ?
 
 ---
 
-## 16. Classes Event Handler
+## 12. Adapter / Gateway
 
-👉 But : réagir aux événements et déclencher des actions de suivi
+**Rôle :** connecter un système externe
 
-Exemple :
-Un OrderPaidEventHandler qui envoie un email de confirmation et met à jour un modèle de lecture de reporting.
+**À retenir :**
+- Traduit les formats
+- Isole les dépendances externes
+- Sert d’intermédiaire
 
-Ce qu'elles sont :
+**Exemple :**
+Paiement via API externe
 
-- Abonnés/listeners qui réagissent aux événements
-- Encapsulent les effets de bord et les workflows de suivi
-- Aident à découpler le producteur d'un événement de ses consommateurs
-
-🧐 Pense :
-"Que doit-il se passer parce que cet événement a eu lieu ?"
+**Question clé :**
+> Comment intégrer sans couplage ?
 
 ---
+
+# AVANCÉ (CQRS / EVENT-DRIVEN)
+
+## 13. Command
+
+**Rôle :** représenter une action
+
+**À retenir :**
+- Intention
+- Données uniquement
+- Pas de logique
+
+**Exemple :**
+CreateOrderCommand
+
+**Question clé :**
+> Quelle action est demandée ?
+
+---
+
+## 14. Command Handler
+
+**Rôle :** exécuter une commande
+
+**À retenir :**
+- Contient le flux du use case
+- Un handler par commande
+
+**Exemple :**
+Créer une commande
+
+**Question clé :**
+> Qui exécute l’action ?
+
+---
+
+## 15. Event
+
+**Rôle :** représenter un fait passé
+
+**À retenir :**
+- Déjà arrivé
+- Immuable
+- Peut être interne ou externe
+
+**Exemple :**
+OrderPaidEvent
+
+**Question clé :**
+> Que s’est-il passé ?
+
+---
+
+## 16. Event Handler
+
+**Rôle :** réagir aux événements
+
+**À retenir :**
+- Déclenche des actions
+- Découple le système
+- Gère les effets de bord
+
+**Exemple :**
+Envoyer un email après paiement
+
+**Question clé :**
+> Que faire après cet événement ?
+
+---
+
+# RÉSUMÉ RAPIDE
+
+| Type                | Rôle principal                  |
+|--------------------|-------------------------------|
+| Entité             | Objet métier                  |
+| Aggregate Root     | Gardien de cohérence          |
+| Value Object       | Valeur immuable               |
+| Domain Service     | Logique métier transverse     |
+| Application Service| Orchestration                 |
+| DTO                | Transport de données          |
+| Mapper             | Transformation                |
+| Controller         | Entrée du système             |
+| Presenter          | Format de sortie              |
+| Repository         | Accès aux données             |
+| Infra Service      | Services externes             |
+| Adapter            | Intégration externe           |
+| Command            | Intention                     |
+| Handler            | Exécution                     |
+| Event              | Fait passé                    |
+| Event Handler      | Réaction                      |

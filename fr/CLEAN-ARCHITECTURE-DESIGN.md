@@ -1,151 +1,188 @@
+# ARCHITECTURE LOGICIELLE — FICHE DE RÉVISION
+
+---
+
 # CLEAN ARCHITECTURE
 
-**Fondation structurelle d'un système backend**
-Clean Architecture définit la manière dont une application unique est structurée en interne. Elle peut être utilisée avec des approches d'architecture et de conception comme DDD, CQRS, Repository Pattern et Event-Driven Architecture. Elle est souvent appliquée à l'intérieur de chaque service dans un système microservices.
+## 1. Définition
 
-👉 Elle organise un système backend en couches pour que la logique métier reste indépendante des détails techniques.
+**Rôle :** structurer une application en couches avec des responsabilités claires
 
-🏗️ Clean Architecture protège la logique métier centrale de l'**EXTÉRIEUR**. **pas de DB dans le domaine, pas de HTTP dans le domaine, pas de framework dans le domaine**
+**À retenir :**
+- Protège le domaine métier des détails techniques
+- Réduit le couplage entre logique métier et infrastructure
+- Facilite les tests et l'évolution du système
 
----
+**Exemple :**
+Le domaine ne dépend ni de SQL, ni de HTTP, ni d'un framework
 
-## 🧠 Quel problème cela résout ?
-
-Sans structure claire, les systèmes finissent comme ceci :
-- logique métier mélangée aux requêtes base de données
-- contrôleurs qui contiennent des règles de domaine
-- changement de bibliothèque qui casse des parties non liées du système
-
-Clean Architecture résout cela en **séparant les responsabilités en couches** et en imposant des règles strictes sur qui peut parler à qui.
+**Question clé :**
+> Comment garder la logique métier indépendante de la technique ?
 
 ---
 
-## 🧠 Idée centrale
+## 2. Problème résolu
 
-👉 Les dépendances doivent toujours pointer **vers l'intérieur** en direction du Core Domain.
+**Rôle :** éviter les systèmes où tout est mélangé
 
-Les couches externes connaissent les couches internes.
-Les couches internes ne connaissent rien des couches externes.
+**À retenir :**
+- Évite les contrôleurs avec logique métier
+- Évite les services métier couplés à la base de données
+- Empêche qu'un changement technique casse des règles métier
 
-Cela signifie :
-- la logique métier centrale reste indépendante
-- les systèmes externes (base de données, email, HTTP) peuvent être remplacés sans toucher à la logique métier centrale
-- le système reste testable et flexible
+**Exemple :**
+Remplacer PostgreSQL par MongoDB sans réécrire le domaine
 
----
-
-## 🔑 Principe clé derrière cette architecture
-
-👉 **Dependency Inversion Principle** : les modules de haut niveau (logique métier) ne doivent pas dépendre des modules de bas niveau (détails techniques). Les deux doivent dépendre d'abstractions (interfaces).
-
-En pratique : la couche Application définit une interface (par ex. `UserRepositoryInterface`) et la couche Infrastructure l'implémente. Le domaine ne sait jamais quelle base de données est utilisée.
-
-NOTE : Les interfaces comme pont entre couches sont expliquées en détail dans [ABSTRACTIONS.md](ABSTRACTIONS.md).
+**Question clé :**
+> Qu'est-ce qui casse quand je change un détail technique ?
 
 ---
 
-## 🗂️ Les 4 couches
+## 3. Règle des dépendances
 
-NOTE : Les rôles de classes mentionnés dans chaque couche sont détaillés dans [CLASS-ROLES.md](CLASS-ROLES.md).
+**Rôle :** imposer le sens des dépendances
 
----
+**À retenir :**
+- Les dépendances pointent toujours vers l'intérieur
+- Les couches externes connaissent les internes
+- Les couches internes ignorent les externes
 
-## 🧱 1. Core Domain (couche la plus interne)
+**Exemple :**
+Infrastructure -> Application -> Core Domain
 
-Ce qu'elle contient :
-- Entités
-- Aggregate Roots
-- Value Objects
-- Domain Services
-
-Règles :
-- ❌ ne dépend de rien d'externe
-- ✔ contient uniquement de la logique métier pure
-- ✔ ne doit RIEN savoir des frameworks, bases de données ou HTTP
-
-🧐 Pense :
-"Les règles métier ne doivent pas dépendre de détails techniques"
+**Question clé :**
+> Cette couche dépend-elle d'une couche plus interne ?
 
 ---
 
-## 🟨 2. Couche Application
+## 4. Core Domain
 
-Ce qu'elle contient :
-- Application Services
-- DTOs
-- Mappers
-- (Interfaces/contrats pour l'Infrastructure — implémentés ailleurs)
+**Rôle :** contenir les règles métier centrales
 
-Règles :
-- ✔ dépend du Core Domain
-- ❌ ne dépend PAS directement de l'Infrastructure ni des Frameworks
-- ✔ coordonne les objets de domaine et les cas d'usage
-- ✔ définit les interfaces que l'Infrastructure doit implémenter
-- ❌ ne doit PAS contenir de règles métier centrales (elles appartiennent au Domain)
+**À retenir :**
+- Contient entités, value objects, agrégats, domain services
+- Aucun accès direct aux bases de données ou APIs externes
+- Doit rester pur et testable en isolation
 
-🧐 Pense :
-"Les cas d'usage dépendent des règles métier, pas des détails techniques"
+**Exemple :**
+Règle de facturation sans import de librairie SQL
+
+**Question clé :**
+> Cette logique exprime-t-elle une règle métier pure ?
 
 ---
 
-## 🟩 3. Couche Interface (API / point d'entrée)
+## 5. Couche Application
 
-Ce qu'elle contient :
-- Controllers (requêtes API / requêtes CLI)
-- Output (réponses API / réponses CLI)
+**Rôle :** orchestrer les cas d'usage
 
-Règles :
-- ✔ dépend de la couche Application
-- ✔ reçoit les entrées externes (HTTP, CLI, etc.)
-- ❌ ne contient PAS de logique métier
+**À retenir :**
+- Coordonne le flux d'un use case
+- Utilise le domaine sans contenir le coeur des règles métier
+- Définit les interfaces à implémenter côté infrastructure
 
-🧐 Pense :
-"Les entrées/sorties ne doivent pas contenir de règles de domaine"
+**Exemple :**
+`CreateOrderService` orchestre validation, persistance, publication d'événement
 
----
-
-## 🟪 4. Couche Infrastructure
-
-Ce qu'elle contient :
-- Repositories (implémentations)
-- Infrastructure Services
-- Adapters / Gateways
-
-Règles :
-- ✔ dépend du Core Domain (implémente ses interfaces)
-- ✔ dépend des abstractions Application (implémente ses interfaces)
-- ✔ implémente tous les détails techniques
-- ❌ ne doit PAS contenir de règles métier
-
-🧐 Pense :
-"Les détails techniques servent le domaine, ils ne le définissent pas"
+**Question clé :**
+> Ce code orchestre-t-il un cas d'usage sans devenir technique ?
 
 ---
 
-## 🔁 5. Flux de dépendances (règle d'or)
+## 6. Couche Interface
 
-```
-Couche Interface  →  Couche Application  →  Core Domain
-Infrastructure    →  Core Domain (implémente ses abstractions)
-```
+**Rôle :** gérer les entrées/sorties du système
 
-👉 Remarque : l'Infrastructure ne se place PAS "au-dessus" de quoi que ce soit. Elle se branche au système depuis l'extérieur en implémentant les interfaces définies dans les couches internes.
+**À retenir :**
+- Reçoit requêtes HTTP/CLI/messages
+- Appelle la couche application
+- Ne décide pas des règles métier
 
----
+**Exemple :**
+Un controller transforme la requête puis délègue à un application service
 
-## 🧪 Pourquoi cela facilite les tests
-
-Parce que le Core Domain ne dépend de rien d'externe, tu peux tester la logique métier en isolation complète — sans base de données, sans HTTP, sans framework.
-
-Tu remplaces les implémentations d'infrastructure réelles par des versions factices (mocks/stubs) dans les tests.
+**Question clé :**
+> Ce composant sert-il juste d'adaptateur d'entrée/sortie ?
 
 ---
 
-## ⚠️ Erreurs courantes à éviter
+## 7. Couche Infrastructure
 
-| Erreur | Pourquoi cela casse Clean Architecture |
+**Rôle :** implémenter les détails techniques
+
+**À retenir :**
+- Implémente repositories, gateways, services externes
+- Dépend des interfaces internes
+- Peut être remplacée sans toucher le domaine
+
+**Exemple :**
+`SqlUserRepository` implémente `UserRepository`
+
+**Question clé :**
+> Ce code est-il un détail technique remplaçable ?
+
+---
+
+## 8. Dependency Inversion Principle
+
+**Rôle :** découpler modules métier et modules techniques
+
+**À retenir :**
+- Le haut niveau dépend d'abstractions, pas d'implémentations
+- Le bas niveau implémente ces abstractions
+- Les contrats appartiennent aux couches internes
+
+**Exemple :**
+`UserRepository` défini en application, implémenté en infrastructure
+
+**Question clé :**
+> L'interface est-elle au bon endroit (interne) ?
+
+---
+
+## 9. Testabilité
+
+**Rôle :** rendre la logique métier facile à tester
+
+**À retenir :**
+- Le domaine se teste sans DB, réseau, framework
+- Les dépendances techniques se remplacent par des mocks/stubs
+- Les tests métier deviennent rapides et stables
+
+**Exemple :**
+Tester la création de commande avec un repository factice en mémoire
+
+**Question clé :**
+> Puis-je tester ce comportement sans infrastructure réelle ?
+
+---
+
+## 10. Erreurs courantes
+
+**Rôle :** identifier les violations de l'architecture
+
+**À retenir :**
+- Controller avec logique métier
+- Application service qui exécute du SQL direct
+- Domaine qui importe des librairies techniques
+
+**Exemple :**
+Un domain service qui envoie directement un email
+
+**Question clé :**
+> Cette responsabilité est-elle dans la bonne couche ?
+
+---
+
+# RÉSUMÉ RAPIDE
+
+| Élément | Rôle principal |
 |---|---|
-| Le Controller contient de la logique métier | Mélange présentation et règles de domaine |
-| Un Domain Service importe une bibliothèque base de données | Le Core Domain dépend de l'infrastructure |
-| Un Application Service appelle SQL directement | Contourne l'abstraction Repository |
-| L'Infrastructure connaît les Controllers | Dépendance orientée dans la mauvaise direction |
+| Core Domain | Règles métier pures |
+| Application | Orchestration des cas d'usage |
+| Interface | Entrées et sorties |
+| Infrastructure | Détails techniques |
+| Dépendances | Toujours vers l'intérieur |
+| DIP | Contrats internes, implémentations externes |
+| Testabilité | Domaine isolable |
+| Anti-patterns | Mélange des couches |

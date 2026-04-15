@@ -1,82 +1,137 @@
-# 🧠 Notes OOP et architecture backend
-
-Ce dépôt est ma base de connaissances personnelle sur la programmation orientée objet et l'architecture backend.
-
-Je l'utilise comme **système de référence rapide** pour éviter de chercher sur internet à chaque fois que j'oublie des concepts, des structures, ou la façon dont les éléments s'assemblent.
+# ARCHITECTURE LOGICIELLE — FICHE DE RÉVISION
 
 ---
 
-# 🎯 Objectif de ce dépôt
+# README DU DOSSIER `fr`
 
-Ce dépôt sert à :
+## 1. Vision du dossier
 
-- Stocker et organiser tout ce que j'apprends sur l'OOP et l'architecture backend
-- Me donner un moyen rapide de me rappeler les concepts sans tout réapprendre depuis zéro
-- M'aider à relier les concepts entre eux (pas seulement les mémoriser)
-- Construire une compréhension structurée de la conception des systèmes backend réels
+**Rôle :** centraliser des fiches de révision sur l'OOP et l'architecture backend
+
+**À retenir :**
+- Sert de référence personnelle rapide
+- Vise la clarté des modèles mentaux
+- Relie les concepts au lieu de les isoler
+
+**Exemple :**
+Relire une fiche avant d'implémenter un nouveau module backend
+
+**Question clé :**
+> Où retrouver rapidement un concept d'architecture sans repartir de zéro ?
 
 ---
 
-# 🧠 Ce que ce dépôt N'EST PAS
+## 2. Objectif principal
 
-- Ce n'est pas un tutoriel ni un guide pour les autres
-- Ce n'est pas centré sur des explications parfaites
-- Ce n'est lié à aucun framework ou langage unique
+**Rôle :** soutenir l'apprentissage continu et structuré
+
+**À retenir :**
+- Organiser les concepts clés
+- Accélérer les rappels conceptuels
+- Construire une vision cohérente des systèmes réels
+
+**Exemple :**
+Comparer `CLASS-ROLES.md` et `CLEAN-ARCHITECTURE-DESIGN.md` pour relier rôles et couches
+
+**Question clé :**
+> Est-ce que ce dossier m'aide à décider plus vite et mieux en conception ?
 
 ---
 
-# 📚 Structure des notes
+## 3. Ce que ce dossier n'est pas
 
-Chaque fichier est une "fiche mentale" ciblée sur un concept.
+**Rôle :** cadrer son usage
 
-## 🧱 Concepts fondamentaux d'architecture
+**À retenir :**
+- Pas un tutoriel exhaustif
+- Pas une documentation de framework
+- Pas un contenu figé
+
+**Exemple :**
+Une fiche peut être réécrite si la compréhension évolue
+
+**Question clé :**
+> Est-ce que je cherche ici une base vivante ou une vérité absolue ?
+
+---
+
+## 4. Format des fiches
+
+**Rôle :** standardiser la lecture et la mémorisation
+
+**À retenir :**
+- Titre commun : `ARCHITECTURE LOGICIELLE — FICHE DE RÉVISION`
+- Sections numérotées avec `Rôle / À retenir / Exemple / Question clé`
+- Résumé final sous forme de tableau
+
+**Exemple :**
+`CLASS-ROLES.md` sert de gabarit pour les autres fiches
+
+**Question clé :**
+> Cette fiche suit-elle le même format que les autres pour rester scannable ?
+
+---
+
+## 5. Fichiers principaux
+
+**Rôle :** couvrir les blocs fondamentaux de conception backend
+
+**À retenir :**
 - [Rôles de classes](CLASS-ROLES.md)
-- [Architecture en couches](CLEAN-ARCHITECTURE.md) (Clean Architecture)
-- Architecture hexagonale
-- Modélisation du domaine (bases du DDD)
+- [Clean Architecture](CLEAN-ARCHITECTURE-DESIGN.md)
+- [Abstractions](ABSTRACTIONS.md)
+- [Domain-Driven Design](DOMAIN-DRIVEN-DESIGN.md)
 
-## 🏗️ Règles de conception système
-- Séparation des responsabilités
-- Direction des dépendances
+**Exemple :**
+Lire `ABSTRACTIONS.md` avant de définir les interfaces entre couches
 
-## 🎨 Design patterns
-- Design patterns courants (GoF et patterns pratiques)
-- Quand les utiliser et pourquoi
-
-## 🔌 Abstractions
-- Interfaces
-- Classes abstraites
-- Contrats entre composants
-
-## ⚙️ Patterns avancés
-- CQRS (Commandes / Requêtes / Handlers)
-- Événements et gestionnaires d'événements
-- Patterns backend du monde réel
+**Question clé :**
+> Quel document répond le mieux à la décision de design que je prends maintenant ?
 
 ---
 
-# 🧠 Comment j'utilise ce dépôt
+## 6. Méthode d'utilisation
 
-Quand j'oublie quelque chose, je ne cherche pas au hasard : je viens ici et je :
+**Rôle :** transformer les fiches en outil de décision
 
-- Trouve le concept
-- Rafraîchis mon modèle mental
-- Le reconnecte à la vue d'ensemble de l'architecture
+**À retenir :**
+- Identifier le concept concerné
+- Revoir les questions clés
+- Appliquer les règles dans le code
 
----
+**Exemple :**
+Avant un refactor, vérifier la section "Erreurs courantes" de la fiche concernée
 
-# 🚀 But
-
-Le but n'est pas la mémorisation.
-
-C'est :
-
-👉 de construire un modèle mental clair de l'architecture backend que je peux retrouver instantanément.
+**Question clé :**
+> Comment passer de la lecture à une décision concrète dans mon implémentation ?
 
 ---
 
-# 🧾 Notes
+## 7. Évolution du contenu
 
-C'est un système de notes vivant : il évoluera à mesure que ma compréhension progresse.
+**Rôle :** garder le système de notes vivant
 
-Je peux réécrire des concepts au fur et à mesure que j'apprends de meilleures façons de les structurer.
+**À retenir :**
+- Les fiches évoluent avec la pratique
+- La structure reste stable pour faciliter la relecture
+- Le fond peut être enrichi ou simplifié selon les besoins
+
+**Exemple :**
+Ajouter une section quand un nouveau pattern revient souvent en projet
+
+**Question clé :**
+> Cette mise à jour rend-elle la fiche plus utile en situation réelle ?
+
+---
+
+# RÉSUMÉ RAPIDE
+
+| Élément | Rôle principal |
+|---|---|
+| Vision | Référence personnelle d'architecture |
+| Objectif | Apprentissage structuré |
+| Périmètre | Ni tutoriel, ni doc framework |
+| Format | Fiches homogènes et scannables |
+| Contenu | Concepts backend clés |
+| Usage | Décisions de design plus rapides |
+| Évolution | Notes vivantes et maintenues |
