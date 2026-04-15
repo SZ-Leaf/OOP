@@ -30,8 +30,8 @@ This repo exists to:
 Each file is a focused “mental sheet” about one concept.
 
 ## 🧱 Core Architecture Concepts
-- [Class roles](CLASS-ROLES.md)
-- [Layered architecture](CLEAN-ARCHITECTURE.md) (Clean Architecture)
+- [Class roles](/en/CLASS-ROLES.md)
+- [Layered architecture](/en/CLEAN-ARCHITECTURE.md) (Clean Architecture)
 - Hexagonal architecture
 - Domain modeling (DDD basics)
 
